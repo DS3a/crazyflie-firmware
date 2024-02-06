@@ -103,6 +103,7 @@ static uint32_t cycleTime;
 
 /* Private functions */
 
+/*
 #ifndef CONFIG_MOTORS_ESC_PROTOCOL_DSHOT
 static uint16_t motorsBLConv16ToBits(uint16_t bits)
 {
@@ -114,7 +115,7 @@ static uint16_t motorsConv16ToBits(uint16_t bits)
 {
   return ((bits) >> (16 - MOTORS_PWM_BITS) & ((1 << MOTORS_PWM_BITS) - 1));
 }
-
+*/
 GPIO_InitTypeDef GPIO_PassthroughInput =
 {
     .GPIO_Mode = GPIO_Mode_IN,
@@ -215,8 +216,7 @@ void motorsInit(const MotorPerifDef** motorMapSelect)
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   TIM_OCInitTypeDef  TIM_OCInitStructure;
 
-  if (isInit)
-  {
+  if (isInit) {
     // First to init will configure it
     return;
   }
@@ -460,8 +460,10 @@ void motorsBurstDshot()
 }
 #endif
 
+static motor_command_t motor_command;
 
 // Ithrust is thrust mapped for 65536 <==> 60 grams
+int ii=0;
 void motorsSetRatio(uint32_t id, uint16_t ithrust)
 {
   if (isInit) {
@@ -475,11 +477,19 @@ void motorsSetRatio(uint32_t id, uint16_t ithrust)
 
     motor_ratios[id] = ratio;
 
-    motor_command_t motor_command;
     motor_command.motor_id = id;
     motor_command.motor_ratio = ratio;
-    esp32_motor_commander_enqueue_input(motor_command);
 
+    if (id == MOTOR_M1)
+      esp32_motor_commander_enqueue_input(motor_command);
+    else if (id == MOTOR_M2)
+      esp32_motor_commander_enqueue_input_m2(motor_command);
+    else if (id == MOTOR_M3)
+      esp32_motor_commander_enqueue_input_m3(motor_command);
+    else if (id == MOTOR_M4)
+      esp32_motor_commander_enqueue_input_m4(motor_command);
+
+/*
     if (motorMap[id]->drvType == BRUSHLESS)
     {
 #ifdef CONFIG_MOTORS_ESC_PROTOCOL_DSHOT
@@ -493,7 +503,7 @@ void motorsSetRatio(uint32_t id, uint16_t ithrust)
     {
       motorMap[id]->setCompare(motorMap[id]->tim, motorsConv16ToBits(ratio));
     }
-
+*/
     if (id == MOTOR_M1)
     {
       uint64_t currTime = usecTimestamp();

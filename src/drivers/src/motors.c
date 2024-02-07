@@ -53,6 +53,8 @@ static bool motorSetEnable = false;
 static uint16_t motorPowerSet[] = {0, 0, 0, 0}; // user-requested PWM signals (overrides)
 static uint32_t motor_ratios[] = {0, 0, 0, 0};  // actual PWM signals
 
+/* static float PI = 3.1415; */
+
 #ifdef CONFIG_MOTORS_ESC_PROTOCOL_DSHOT
 static DMA_InitTypeDef DMA_InitStructureShare;
 // Memory buffer for DSHOT bits
@@ -747,4 +749,6 @@ LOG_ADD_CORE(LOG_UINT32, m3, &motor_ratios[MOTOR_M3])
  * @brief Motor power (PWM value) for M4 [0 - UINT16_MAX]
  */
 LOG_ADD_CORE(LOG_UINT32, m4, &motor_ratios[MOTOR_M4])
+
+/* LOG_ADD_CORE(LOG_FLOAT, PI, &PI) */
 LOG_GROUP_STOP(motor)

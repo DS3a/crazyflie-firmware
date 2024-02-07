@@ -5,13 +5,15 @@
 #include "log.h"
 
 #include "debug.h"
+#include "config.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "static_mem.h"
 #include "task.h"
-#include "i2cdev.h"
-#include "uart1.h"
+/* #include "i2cdev.h" */
+/* #include "uart1.h" */
 #include "uart2.h"
+#include "system.h"
 
 #include "deck.h"
 
@@ -36,27 +38,15 @@ STATIC_MEM_QUEUE_ALLOC(esp_motor_commander_input_queue_m3, 1, sizeof(motor_comma
 static xQueueHandle esp_motor_commander_input_queue_m4;
 STATIC_MEM_QUEUE_ALLOC(esp_motor_commander_input_queue_m4, 1, sizeof(motor_command_t));
 
-I2C_Dev esp32_slave;
-#define ESP_I2C_DEV_ADDR 0x55
+/* I2C_Dev esp32_slave; */
+/* #define ESP_I2C_DEV_ADDR 0x55 */
 
 
 static void esp32_motor_commander_task(void*);
-STATIC_MEM_TASK_ALLOC(esp32_motor_commander_task, ESP_MOTOR_COMMANDER_TASK_STACKSIZE);
+/* STATIC_MEM_TASK_ALLOC(esp32_motor_commander_task, ESP_MOTOR_COMMANDER_TASK_STACKSIZE); */
 
 static bool esp32_motor_task_is_init = false;
 void esp32_motor_commander_task_init() {
-    esp_motor_commander_input_queue = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue);
-    esp_motor_commander_input_queue_m2 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m2);
-    esp_motor_commander_input_queue_m3 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m3);
-    esp_motor_commander_input_queue_m4 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m4);
-
-    STATIC_MEM_TASK_CREATE(esp32_motor_commander_task, esp32_motor_commander_task, ESP_MOTOR_COMMANDER_TASK_NAME, NULL, ESP_MOTOR_COMMANDER_TASK_PRI);
-
-    /* uart1Init(115200); */
-    uart2Init(115200);
-    /* i2cdevInit(&esp32_slave); */
-    /* spiBegin(); */
-
     esp32_motor_task_is_init = true;
 
 
@@ -71,6 +61,23 @@ bool esp32_motor_commander_task_test() {
 static bool got_m1=false, got_m2=false, got_m3=false;
 
 static void esp32_motor_commander_task(void* parameters) {
+
+    esp_motor_commander_input_queue = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue);
+    esp_motor_commander_input_queue_m2 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m2);
+    esp_motor_commander_input_queue_m3 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m3);
+    esp_motor_commander_input_queue_m4 = STATIC_MEM_QUEUE_CREATE(esp_motor_commander_input_queue_m4);
+
+    /* STATIC_MEM_TASK_CREATE(esp32_motor_commander_task, esp32_motor_commander_task, ESP_MOTOR_COMMANDER_TASK_NAME, NULL, ESP_MOTOR_COMMANDER_TASK_PRI); */
+
+    /* uart1Init(115200); */
+    uart2Init(115200);
+    /* i2cdevInit(&esp32_slave); */
+    /* spiBegin(); */
+    systemWaitStart();
+
+
+
+
     DEBUG_PRINT("esp32 motor commander task is up\n");
     while (true) {
         motor_command_t input;

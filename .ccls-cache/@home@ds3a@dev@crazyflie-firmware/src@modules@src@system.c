@@ -194,7 +194,7 @@ void systemTask(void *arg)
   commanderInit();
 
   // ESP_MOTOR_COMMANDER_INIT
-  esp32_motor_commander_task_init();
+  /* esp32_motor_commander_task_init(); */
 
   StateEstimatorType estimator = StateEstimatorTypeAutoSelect;
 
@@ -297,7 +297,7 @@ void systemTask(void *arg)
     DEBUG_PRINT("peerLocalization [FAIL]\n");
   }
   // ESP_MOTOR_COMMANDER_TEST
-  pass &= esp32_motor_commander_task_test();
+  /* pass &= esp32_motor_commander_task_test(); */
 
   //Start the firmware
   if(pass)

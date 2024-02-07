@@ -1,4 +1,3 @@
-obj-y += esp32_motor_commander.o
 obj-y += app_channel.o
 obj-$(CONFIG_APP_ENABLE) += app_handler.o
 obj-y += bootloader.o

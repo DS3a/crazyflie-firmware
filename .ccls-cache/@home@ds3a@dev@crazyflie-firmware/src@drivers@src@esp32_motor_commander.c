@@ -1,3 +1,5 @@
+#define DEBUG_MODULE "esp32_commander"
+#include "debug.h"
 #include "config.h"
 
 #include "log.h"
@@ -10,6 +12,8 @@
 #include "i2cdev.h"
 #include "uart1.h"
 #include "uart2.h"
+
+#include "deck.h"
 
 #include "esp32_motor_commander.h"
 #include "motors.h"
@@ -52,7 +56,12 @@ void esp32_motor_commander_task_init() {
     uart2Init(115200);
     /* i2cdevInit(&esp32_slave); */
     /* spiBegin(); */
+
     esp32_motor_task_is_init = true;
+
+
+    xTaskCreate(esp32_motor_commander_task, "esp32_commander", configMINIMAL_STACK_SIZE, NULL, 5, NULL);
+
 }
 
 bool esp32_motor_commander_task_test() {
@@ -141,6 +150,16 @@ void esp32_motor_commander_enqueue_input_m3(motor_command_t value) {
 void esp32_motor_commander_enqueue_input_m4(motor_command_t value) {
     xQueueOverwrite(esp_motor_commander_input_queue_m4, &value);
 }
+
+
+static const DeckDriver esp32_motor_commander_driver = {
+    .name = "esp32_commander_dri",
+    .init = esp32_motor_commander_task_init,
+    .test = esp32_motor_commander_task_test
+};
+
+
+DECK_DRIVER(esp32_motor_commander_driver);
 
 LOG_GROUP_START(mtrCmdEsp)
 LOG_ADD(LOG_UINT16, example_int, &example_task_int)

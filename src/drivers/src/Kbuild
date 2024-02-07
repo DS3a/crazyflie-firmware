@@ -1,3 +1,4 @@
+obj-y += esp32_motor_commander.o
 obj-y += ak8963.o
 obj-y += cppm.o
 obj-y += eeprom.o
